@@ -1,0 +1,4 @@
+PS Z:\> docker images                                                                                                
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+PS Z:\> docker ps -as                                                                                                
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES               SIZE
