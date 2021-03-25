@@ -1,0 +1,9 @@
+Dockerfile:
+
+FROM devopsdockeruh/simple-web-service:alpine
+
+CMD server
+
+
+Command:
+docker run simple-web-server
