@@ -1,0 +1,16 @@
+Dockerfile:
+
+WORKDIR /usr/src/app
+
+COPY webserver.sh .
+
+RUN apt-get update -y
+
+RUN apt-get install curl -y
+
+CMD ./webserver.sh
+
+
+Command:
+
+docker run -it curler
