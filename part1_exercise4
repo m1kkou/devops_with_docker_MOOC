@@ -1,0 +1,4 @@
+#1 - Download and run: docker run -d -it --name missing ubuntu sh -c 'echo "Input website:"; read website; echo "Searching.."; sleep 1; curl http://$website;'
+#2 - Update the container Ubuntu: docker exec missing apt update && apt upgrade
+#3 - Download curl: docker exec -it missing apt install curl
+#4 - Attach to the container: docker attach missing
