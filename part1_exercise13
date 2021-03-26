@@ -1,0 +1,22 @@
+Dockerfile:
+
+FROM golang
+
+ENV REQUEST_ORIGIN=*
+
+WORKDIR /app
+
+COPY . /app
+
+RUN go build
+
+COPY . /app
+
+EXPOSE 8080
+
+CMD ["go", "run", "server"]
+
+
+Command:
+
+docker run -p 8080:8080 bea01677894e
