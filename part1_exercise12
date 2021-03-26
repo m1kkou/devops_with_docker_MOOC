@@ -1,0 +1,15 @@
+Dockerfile:
+
+FROM node
+
+WORKDIR /app
+
+COPY package.json /app
+
+RUN npm install -g serve
+
+COPY . /app
+
+EXPOSE 5000
+
+CMD ["serve", "-s", "-l", "5000", "build"]
