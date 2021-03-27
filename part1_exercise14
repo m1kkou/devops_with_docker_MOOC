@@ -1,0 +1,51 @@
+Dockerfile (frontend):
+
+FROM node
+  
+WORKDIR /app
+
+COPY package.json /app
+
+RUN npm install -g serve
+
+COPY . /app
+
+RUN npm install
+
+COPY . /app
+
+RUN REACT_APP_BACKEND_URL=http://localhost:8080 npm run build
+
+EXPOSE 5000
+
+CMD ["serve", "-s", "build"]
+
+
+Command (frontend):
+
+docker run -p 5000:5000 3361667c5d93
+
+
+Dockerfile (backend):
+
+FROM golang
+
+ENV REQUEST_ORIGIN=*
+
+WORKDIR /app
+
+COPY . /app
+
+RUN go build
+
+COPY . /app
+
+EXPOSE 8080
+
+CMD ["go", "run", "server"]
+
+
+Command (backend):
+
+docker run -p 8080:8080 bea01677894e
+
