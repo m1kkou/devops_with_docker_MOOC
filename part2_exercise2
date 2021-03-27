@@ -1,0 +1,15 @@
+docker-compose.yml
+
+version: '3.5'
+  
+services:
+  simple-web-service:
+    image: devopsdockeruh/simple-web-service:latest
+    ports:
+      - 8080:8080
+    build: .
+    volumes:
+      - /Users/mikkojokipelto/Documents/MOOC/DevOps_with_Docker/exercise2_1/log_output.log:/usr/src/app/text.log
+      - /usr/src/app/
+    container_name: simple-web-service
+    command: ["go","server"]
