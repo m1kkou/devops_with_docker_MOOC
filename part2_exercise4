@@ -1,0 +1,20 @@
+docker-compose.yml
+
+version: '3.5'
+  
+services:
+  redis:
+    image: 'redis:latest'
+    restart: unless-stopped
+  frontend:
+    build: ../exercise2_3/frontend
+    ports:
+      - 5000:5000
+    container_name: example_frontend
+  backend:
+    build:
+      context: ../exercise2_3/backend
+      dockerfile: Dockerfile_redis
+    ports:
+      - 8080:8080
+    container_name: example_backend
