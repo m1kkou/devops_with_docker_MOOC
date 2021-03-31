@@ -1,0 +1,53 @@
+NOTE! For some reason my backend app doesn't initialize the postgres db, so in order to make the data in the db robust I needed to inject some code 
+for the database on the start of the container - this is the reason I have the mount: ./init.sql:/docker-entrypoint-initdb.d/init.sql on my db -service. 
+The init file basically checks that if we don't have a datatable called: messages with id and body cells it creates that.
+
+docker-compose.yml:
+
+version: '3.5'
+  
+services:
+  db:
+    image: 'postgres:13'
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+    container_name: example_db
+    ports:
+      - 5432:5432
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - database:/var/lib/postgresql/data/pgdata
+  redis:
+    image: 'redis:6.2.1-alpine'
+    restart: unless-stopped
+    container_name: example_proxy
+    volumes:
+      - proxy:/data
+    depends_on:
+      - db
+  frontend:
+    build: ../exercise2_3/frontend
+    ports:
+      - 5000:5000
+    container_name: example_frontend
+  backend:
+    build:
+      context: ../exercise2_3/backend
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    container_name: example_backend
+    environment:
+      REDIS_HOST: redis
+      POSTGRES_HOST: db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres 
+      POSTGRES_DATABASE: postgres
+    depends_on:
+      - db
+    
+volumes:
+  database:
+  proxy:
