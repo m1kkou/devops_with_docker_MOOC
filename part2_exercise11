@@ -1,0 +1,6 @@
+I containerized my node backend app. And made a docker-compose.yml for building the dev environment up. I 
+used an alpine version of the node image to make it a bit lighter on my hardrive. You only need to "docker-
+compose up" and it's up and running.
+
+The app is a REST api which supports the basic CRUD operations, it's also connected to a MongoDB database 
+(with mongoose) and cloudinary for photo storage and retrieval. 
