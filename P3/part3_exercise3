@@ -1,0 +1,119 @@
+docker-compose.yaml:
+
+version: "3.5"
+
+services:
+  proxy:
+    image: "nginx:latest"
+    volumes:
+      - ./nginx_conf/:/etc/nginx/
+    ports:
+      - 80:80
+    restart: unless-stopped
+    networks:
+      - frontend-net
+      - backend-net
+    container_name: nginx_proxy
+
+  db:
+    image: "postgres"
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: example
+    networks:
+      - db-net
+    container_name: postgres_db
+
+  redis:
+    image: "redis:latest"
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+    networks:
+      - redis-net
+    container_name: redis
+
+  frontend:
+    build: ./frontend
+    ports:
+      - 5000:5000
+    networks:
+      - frontend-net
+    container_name: example_frontend
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    container_name: example_backend
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_PASSWORD: example
+    networks:
+      - redis-net
+      - db-net
+      - backend-net
+    depends_on:
+      - db
+
+networks:
+  frontend-net:
+  backend-net:
+  redis-net:
+  db-net:
+
+
+dockerfile frontend:
+
+FROM node
+
+WORKDIR /app
+
+COPY package.json /app
+
+RUN npm install -g serve
+
+COPY . /app
+
+RUN npm install
+
+COPY . /app
+
+RUN REACT_APP_BACKEND_URL=http://localhost:8080 npm run build
+
+EXPOSE 5000
+
+RUN chmod a + x /app \
+    useradd -m appuser
+
+USER appuser
+
+ENTRYPOINT ["serve", "-s", "build"]
+
+
+Dockerfile backend:
+
+FROM golang
+
+ENV REQUEST_ORIGIN=*
+
+ENV REDIS_HOST=redis
+
+WORKDIR /app
+
+COPY . /app
+
+RUN go build
+
+COPY . /app
+
+EXPOSE 8080
+
+RUN chmod a + x /app \
+    useradd -m appuser
+
+USER appuser
+
+ENTRYPOINT ["go", "run", "server"]
